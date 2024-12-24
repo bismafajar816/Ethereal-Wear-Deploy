@@ -44,7 +44,7 @@ export const logoutUser = createAsyncThunk(
 
   async () => {
     const response = await axios.post(
-      "${backendURL}/api/auth/logout",
+      "https://eatheral-wear-backend.vercel.app/api/auth/logout",
       {},
       {
         withCredentials: true,
