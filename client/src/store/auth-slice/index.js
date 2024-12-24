@@ -12,7 +12,7 @@ export const registerUser = createAsyncThunk(
 
   async (formData) => {
     const response = await axios.post(
-      "${backendURL}/api/auth/register",
+      "https://eatheral-wear-backend.vercel.app/api/auth/register",
       formData,
       {
         withCredentials: true,
@@ -28,7 +28,7 @@ export const loginUser = createAsyncThunk(
 
   async (formData) => {
     const response = await axios.post(
-      "${backendURL}/api/auth/login",
+      "https://eatheral-wear-backend.vercel.app/api/auth/login",
       formData,
       {
         withCredentials: true,
@@ -60,7 +60,7 @@ export const checkAuth = createAsyncThunk(
 
   async () => {
     const response = await axios.get(
-      "${backendURL}/api/auth/check-auth",
+      "https://eatheral-wear-backend.vercel.app/api/auth/check-auth",
       {
         withCredentials: true,
         headers: {
