@@ -10,7 +10,7 @@ export const getFeatureImages = createAsyncThunk(
   "/order/getFeatureImages",
   async () => {
     const response = await axios.get(
-      `${backendURL}/api/common/feature/get`
+      `https://eatheral-wear-backend.vercel.app/api/common/feature/get`
     );
 
     return response.data;
@@ -21,7 +21,7 @@ export const addFeatureImage = createAsyncThunk(
   "/order/addFeatureImage",
   async (image) => {
     const response = await axios.post(
-      `${backendURL}/api/common/feature/add`,
+      `https://eatheral-wear-backend.vercel.app/api/common/feature/add`,
       { image }
     );
 
