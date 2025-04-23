@@ -1,67 +1,47 @@
-import CommonForm from "@/components/common/form";
-import { useToast } from "@/components/ui/use-toast";
-import { registerFormControls } from "@/config";
-import { registerUser } from "@/store/auth-slice";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 
-const initialState = {
-  userName: "",
-  email: "",
-  password: "",
-};
-
-function AuthRegister() {
-  const [formData, setFormData] = useState(initialState);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { toast } = useToast();
-
-  function onSubmit(event) {
-    event.preventDefault();
-    dispatch(registerUser(formData)).then((data) => {
-      if (data?.payload?.success) {
-        toast({
-          title: data?.payload?.message,
-        });
-        navigate("/auth/login");
-      } else {
-        toast({
-          title: data?.payload?.message,
-          variant: "destructive",
-        });
-      }
-    });
+// Async thunk for registering a user
+export const registerUser = createAsyncThunk(
+  "auth/registerUser",
+  async (userData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        "https://eatheral-wear-backend.vercel.app/api/auth/register",
+        userData
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || { message: "Something went wrong" }
+      );
+    }
   }
+);
 
-  console.log(formData);
+const authSlice = createSlice({
+  name: "auth",
+  initialState: {
+    user: null,
+    loading: false,
+    error: null,
+  },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(registerUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(registerUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user || null;
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "Failed to register";
+      });
+  },
+});
 
-  return (
-    <div className="mx-auto w-full max-w-md space-y-6">
-      <div className="text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Create new account
-        </h1>
-        <p className="mt-2">
-          Already have an account
-          <Link
-            className="font-medium ml-2 text-primary hover:underline"
-            to="/auth/login"
-          >
-            Login
-          </Link>
-        </p>
-      </div>
-      <CommonForm
-        formControls={registerFormControls}
-        buttonText={"Sign Up"}
-        formData={formData}
-        setFormData={setFormData}
-        onSubmit={onSubmit}
-      />
-    </div>
-  );
-}
-
-export default AuthRegister;
+export default authSlice.reducer;
